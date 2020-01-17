@@ -1,0 +1,151 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentName": {
+            "type": "string",
+            "defaultValue": "coinvalue",
+            "metadata": {
+                "description": "The name of the deployment (used as prefix)"
+            }
+        },
+        "uniqueName": {
+            "type": "string",
+            "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
+            "metadata": {
+                "description": "A default value used for unique resource names"
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "[concat(concat(parameters('deploymentName'), 'storage'), parameters('uniqueName'))]",
+            "metadata": {
+                "description": "The name of the attached storage account"
+            }
+        },
+        "applicationInsightsName": {
+            "type": "string",
+            "defaultValue": "[concat(concat(parameters('deploymentName'), '-analytics-'), parameters('uniqueName'))]",
+            "metadata": {
+                "description": "The name of the application insights of the function"
+            }
+        },
+        "servicePlanName": {
+            "type": "string",
+            "defaultValue": "[concat(concat(parameters('deploymentName'), '-plan-'), parameters('uniqueName'))]",
+            "metadata": {
+                "description": "The name of the service plan of the function"
+            }
+        },
+        "functionName": {
+            "type": "string",
+            "defaultValue": "[concat(concat(parameters('deploymentName'), '-function-'), parameters('uniqueName'))]",
+            "metadata": {
+                "description": "The name of the deployed function"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "name": "[parameters('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "name": "[parameters('applicationInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2015-05-01",
+            "location": "[resourceGroup().location]",
+            "kind": "web",
+            "properties": {
+                "application_Type": "web"
+            }
+        },
+        {
+            "name": "[parameters('servicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[parameters('servicePlanName')]"
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "type": "Microsoft.Web/sites",
+            "name": "[parameters('functionName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('servicePlanName'))]",
+                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('servicePlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(parameters('storageAccountName'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(parameters('storageAccountName'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(parameters('storageAccountName'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(parameters('functionName'))]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "StorageAccountName": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]"
+        },
+        "ApplicationInsightsName": {
+            "type": "string",
+            "value": "[parameters('applicationInsightsName')]"
+        },
+        "ServicePlanName": {
+            "type": "string",
+            "value": "[parameters('servicePlanName')]"
+        },
+        "FunctionName": {
+            "type": "string",
+            "value": "[parameters('functionName')]"
+        }
+    },
+    "functions": [
+    ]
+}
