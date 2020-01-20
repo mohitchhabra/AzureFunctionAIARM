@@ -15,7 +15,7 @@ This document outlines the steps necessary to have a development environment cap
 *Important: This step is only required if your are planing to only use `Visual Studio Code` as your development environnement and not yet have `Visual Studio` installed*
 
 1. Download the current version of Node.JS from [here](https://nodejs.org/en/)
-   - If you are unsure wether to choose `current` or `LTS`, choose `LTS` as its supported for a longer period of time and will work the same
+   - If you are unsure whether to choose `current` or `LTS`, choose `LTS` as its supported for a longer period of time and will work the same.
 2. Run the installer and follow the instructions
 3. Reboot your machine (optional)
 4. Open up a PowerShell window
