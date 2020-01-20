@@ -16,7 +16,7 @@ When using `Visual Studio Code` (which is my preferred way), you will need some 
 
 The ARM Template Viewer gives you a nice visualization of your deployment and is thus beneficial alongside the code during development of the template. The visualization for this project is given below:
 
-![ARM template visualization](./images/arm-visual.png)
+![ARM template visualization](./images/arm-visual.jpg)
 
 ### Visual Studio
 
