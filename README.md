@@ -4,7 +4,7 @@ This project demonstrates Azure Function (v2) and automatic deployment using Azu
 
 ## Prerequisites
 
-Regardles of platform and IDE you will have to install the [.Net Core SDK](https://dotnet.microsoft.com/download) and the current [Azure Functions Core Tools](https://www.npmjs.com/package/azure-functions-core-tools). Which version of the SDK you need, depends on the version of function you want to develop [Version overview](https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions). *This project uses the 2nd version of Azure Functions.*
+Regardles of platform and IDE you will have to install the [.Net Core SDK](https://dotnet.microsoft.com/download) and the current [Azure Functions Core Tools](https://www.npmjs.com/package/azure-functions-core-tools). Which version of the SDK you need, depends on the version of function you want to develop: [Version overview](https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions). *This project uses the 2nd version of Azure Functions.*
 
 ### Visual Studio Code
 
